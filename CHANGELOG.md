@@ -1,3 +1,6 @@
+## 0.7.0
+- Bump min SDK version to 3.9.0.
+
 ## 0.6.4 ([diff](https://github.com/ykmnkmi/jinja.dart/compare/1c0015b..main))
 - Refactoring.
 
