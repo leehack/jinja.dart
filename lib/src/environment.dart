@@ -45,7 +45,7 @@ typedef ItemGetter = Object? Function(Object? key, Object? object);
 /// A function that returns a value or throws an error if the variable is not
 /// found.
 ///
-/// Used by `{{ user.field }}` expression when `user` not found.
+/// Used by `{{ user.field }}` expression when `user` is not found.
 typedef UndefinedCallback = Object? Function(String name, [String? template]);
 
 /// Pass the [Context] as the first argument to the applied function when
