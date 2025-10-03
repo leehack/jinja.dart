@@ -254,8 +254,9 @@ base class Environment {
   }
 
   /// The [Lexer] for this environment.
+  @Deprecated('Will be removed in next release.')
   Lexer get lexer {
-    return Lexer.cached(this);
+    return Lexer(this);
   }
 
   @override
@@ -331,8 +332,8 @@ base class Environment {
   /// Lex the given source and return a list of tokens.
   ///
   /// This can be useful for extension development and debugging templates.
-  Iterable<Token> lex(String source, {String? path}) {
-    return lexer.tokenize(source, path: path);
+  Iterable<Token> lex(String source, {String? name, String? path}) {
+    return Lexer(this).scan(source, name: name, path: path);
   }
 
   /// Parse the list of tokens and return the AST node.

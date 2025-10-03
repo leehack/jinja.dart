@@ -2,7 +2,6 @@ import 'package:jinja/src/environment.dart';
 import 'package:jinja/src/exceptions.dart';
 import 'package:jinja/src/lexer.dart';
 import 'package:jinja/src/nodes.dart';
-import 'package:jinja/src/reader.dart';
 import 'package:textwrap/textwrap.dart';
 
 final class Parser {
@@ -36,12 +35,12 @@ final class Parser {
     String? currentlyLooking;
 
     for (var tokens in endTokensStack) {
-      expected.addAll(tokens.map<String>(describeExpression));
+      expected.addAll(tokens.map<String>(describeTokenRecord));
     }
 
     if (endTokensStack.isNotEmpty) {
       currentlyLooking = endTokensStack.last
-          .map<String>((token) => "'${describeExpression(token)}'")
+          .map<String>((token) => "'${describeTokenRecord(token)}'")
           .join(' or ');
     }
 
