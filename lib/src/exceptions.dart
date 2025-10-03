@@ -16,7 +16,7 @@ abstract class TemplateError implements Exception {
   }
 }
 
-/// Raised if a template does not exist.
+/// Thrown if a template does not exist.
 class TemplateNotFound extends TemplateError {
   /// Creates a new [TemplateNotFound].
   TemplateNotFound({this.name, String? message}) : super(message);
@@ -38,7 +38,7 @@ class TemplateNotFound extends TemplateError {
   }
 }
 
-/// Like [TemplateNotFound], but raised if multiple templates are selected.
+/// Like [TemplateNotFound], but thrown if multiple templates are selected.
 class TemplatesNotFound extends TemplateNotFound {
   /// Creates a new [TemplatesNotFound].
   TemplatesNotFound({this.names, super.message}) : super(name: names?.last);
@@ -62,10 +62,13 @@ class TemplatesNotFound extends TemplateNotFound {
   }
 }
 
-/// Raised to tell the user that there is a problem with the template.
+/// Thrown to tell the user that there is a problem with the template.
 class TemplateSyntaxError extends TemplateError {
   /// Creates a new [TemplateSyntaxError].
-  TemplateSyntaxError(super.message, {this.path, this.line});
+  TemplateSyntaxError(super.message, {this.name, this.path, this.line});
+
+  /// The name of the template that caused the error.
+  final String? name;
 
   /// The path to the template that caused the error.
   final String? path;
@@ -73,11 +76,8 @@ class TemplateSyntaxError extends TemplateError {
   /// The line in the template that caused the error.
   final int? line;
 
-  @override
-  String toString() {
-    var buffer = StringBuffer('TemplateSyntaxError');
-
-    if (path case var path?) {
+  void _toStringBuffer(StringBuffer buffer) {
+    if (path ?? name case var path?) {
       buffer
         ..write(", file '")
         ..write(path)
@@ -95,7 +95,12 @@ class TemplateSyntaxError extends TemplateError {
         ..write(': ')
         ..write(message);
     }
+  }
 
+  @override
+  String toString() {
+    var buffer = StringBuffer('TemplateSyntaxError');
+    _toStringBuffer(buffer);
     return buffer.toString();
   }
 }
@@ -103,23 +108,21 @@ class TemplateSyntaxError extends TemplateError {
 /// Like a [TemplateSyntaxError], but covers cases where something in the
 /// template caused an error at parsing time that wasn't necessarily caused
 /// by a syntax error.
-class TemplateAssertionError extends TemplateError {
+class TemplateAssertionError extends TemplateSyntaxError {
   /// Creates a new [TemplateAssertionError].
-  TemplateAssertionError([super.message]);
+  TemplateAssertionError(super.message, {super.name, super.path, super.line});
 
   @override
   String toString() {
-    if (message case var message?) {
-      return 'TemplateAssertionError: $message';
-    }
-
-    return 'TemplateAssertionError';
+    var buffer = StringBuffer('TemplateAssertionError');
+    _toStringBuffer(buffer);
+    return buffer.toString();
   }
 }
 
 /// A generic runtime error in the template engine.
 ///
-/// Under some situations Jinja may raise this exception.
+/// Under some situations Jinja may throw this exception.
 class TemplateRuntimeError extends TemplateError {
   /// Creates a new [TemplateRuntimeError].
   TemplateRuntimeError([super.message]);
@@ -134,7 +137,7 @@ class TemplateRuntimeError extends TemplateError {
   }
 }
 
-/// Raised if a variable is undefined.
+/// Thrown if a variable is undefined.
 class UndefinedError extends TemplateRuntimeError {
   /// Creates a new [UndefinedError].
   UndefinedError([super.message]);
